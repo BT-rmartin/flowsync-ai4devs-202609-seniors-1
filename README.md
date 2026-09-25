@@ -44,12 +44,12 @@ Cinco cosas, cada una con el comando que dice si la tienes y el síntoma de tene
 
 Se trabaja sobre **tu propio fork**, porque sobre el repositorio del curso no tienes permiso de escritura: la entrega es un pull request desde él hacia el del curso.
 
-1. Entra en **https://github.com/LIDR-academy/flowsync-ai4devs** y pulsa **Fork**.
+1. Entra en **https://github.com/LIDR-academy/flowsync-ai4devs-202609-seniors-1** y pulsa **Fork**.
 2. Clona **tu fork** y entra en la carpeta.
 3. Añade el repositorio original como `upstream` y trae de ahí la rama de partida:
 
 ```bash
-git remote add upstream https://github.com/LIDR-academy/flowsync-ai4devs.git
+git remote add upstream https://github.com/LIDR-academy/flowsync-ai4devs-202609-seniors-1.git
 git fetch upstream
 git checkout -b s9/start upstream/s9/start
 ```
@@ -180,7 +180,7 @@ Van en un archivo llamado `HALLAZGOS.md`, en la raíz del proyecto, junto a `pro
 
 1. Entrega desde la rama `bloqueo-<tus-iniciales>` que creaste al dejar el entorno listo, no desde `s9/start`.
 2. **Guarda tus prompts en `prompts.md`, en la raíz.** Ese nombre y esa ubicación no son negociables: es lo que lee la herramienta que revisa las entregas. El repositorio ya lo trae con su plantilla puesta. **Cada prompt va en su propio bloque de código**, con el modelo y la herramienta que usaste.
-3. Empuja tu rama a tu fork (`git push -u origin bloqueo-<tus-iniciales>`) y abre el **pull request (PR, por sus siglas en inglés) desde tu fork hacia el repositorio del curso** (`github.com/LIDR-academy/flowsync-ai4devs`; comprueba que el repositorio base que te propone GitHub es ese y no tu fork), con `HALLAZGOS.md` (tus tres líneas, en la raíz del proyecto), `prompts.md` y el registro de bloqueos dentro.
+3. Empuja tu rama a tu fork (`git push -u origin bloqueo-<tus-iniciales>`) y abre el **pull request (PR, por sus siglas en inglés) desde tu fork hacia el repositorio del curso** (`github.com/LIDR-academy/flowsync-ai4devs-202609-seniors-1`; comprueba que el repositorio base que te propone GitHub es ese y no tu fork), con `HALLAZGOS.md` (tus tres líneas, en la raíz del proyecto), `prompts.md` y el registro de bloqueos dentro.
 
 ### El plazo
 
