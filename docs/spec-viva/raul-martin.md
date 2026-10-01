@@ -126,12 +126,12 @@ El sistema SHALL responder en JSON en todas las rutas de cuentas y acceso, tambi
 
 ### Requirement: Errores identificables por `rule` y `field`
 
-El sistema SHALL identificar cada error de validación con `rule` y `field`, que son el contrato para los clientes; `message` es un texto informativo en inglés y los clientes no deben depender de él.
+El sistema SHALL acompañar cada error de validación de `rule` y `field`, además de un `message` en inglés, y la pantalla SHALL construir sus mensajes en castellano a partir de `rule` y `field`.
 
 #### Scenario: Error de validación
 
 - **WHEN** una petición de registro o de inicio de sesión falla la validación
-- **THEN** cada entrada de `errors` trae `rule` y `field` estables, y la pantalla construye su mensaje en castellano a partir de ellos, sin usar `message`
+- **THEN** cada entrada de `errors` trae `rule`, `field` y `message` en inglés, y la pantalla muestra un mensaje en castellano construido a partir de `rule` y `field`, nunca el `message` recibido
 
 #### Scenario: Error de credenciales o de autenticación
 
@@ -285,7 +285,7 @@ La aplicación web SHALL ofrecer en el perfil un botón «Cerrar sesión» que t
 
 - Requisitos escritos por el agente: 14
 - Requisitos comprobados por el agente contra el código: 14
-- Requisitos comprobados por mí abriendo el código: No revisados manualmente por desconocer el código de las tecnologías de backend y frontend
+- Requisitos comprobados por mí abriendo el código: 0. No revisados manualmente por desconocer el código de las tecnologías de backend y frontend, pero sí revisados por el agente y por los tests funcionales, que cubren todos los escenarios de la spec. Yo revisé las conclusiones del agente sin abrir el código
 
 ### 2. Incoherencias aparecidas al escribirla
 
@@ -304,37 +304,43 @@ La aplicación web SHALL ofrecer en el perfil un botón «Cerrar sesión» que t
 
 ### 3. Bug o contrato
 
-Prácticamente todas las incoherencias son bugs, salvo la del nombre opcional, que es un contrato.
-Sólo hay una incoherencia que no sé diferenciar si es contrato o bug, de hecho creo que son las dos: la del servidor inaccesible al arrancar, que muestra el login aunque la sesión sigue guardada.
+Hay una incoherencia que no he sabido decidir si es bug o contrato, porque se sostienen las dos lecturas: la del servidor inaccesible al arrancar. Del resto, siete son bugs y tres son contratos (la clave `fullName` obligatoria, «Cerrando sesión…» y, como contrato propuesto, que los clientes se fíen de `rule` y `field`).
 
-Aquí tienes mi lista de veredictos:
+**Sin decidir**
 
-**1. El email distingue mayúsculas**
+**1. Con el servidor inaccesible al arrancar se muestra el login y se conserva la sesión**
+- Sin veredicto: las dos lecturas se sostienen. Conservar el token es contrato, porque el propio código deja escrita esa intención. Mostrar el login con la sesión guardada es bug, por el token huérfano y porque la persona cree que está fuera.
+
+**Decidido: bugs**
+
+**2. El email distingue mayúsculas**
 - Veredicto: bug. Los buzones de correo no distinguen mayúsculas, y ese es el comportamiento que se debería modelar. Con lo que hay ahora sí se distinguen, y además la pantalla no avisa de ello.
 
-**2. El logout responde sin envoltorio `data`**
+**3. El logout responde sin envoltorio `data`**
 - Veredicto: bug no grave. Todas las respuestas van envueltas menos esta, así que por coherencia debería envolverse. No es bloqueante ahora mismo, porque la pantalla ignora el cuerpo de la respuesta.
 
-**3. La clave `fullName` es obligatoria aunque el nombre sea opcional**
-- Veredicto: contrato. La API admite `null` pero pide que la clave esté, y el cliente la envía siempre, con un comentario que lo explica. Si un día se permite omitirla, basta con aceptar su ausencia en la API, que es un cambio compatible con los clientes actuales.
-
-**4. Con el servidor inaccesible al arrancar se muestra el login y se conserva la sesión**
-- Veredicto: contrato y bug. Conservar el token es contrato, porque el propio código deja escrita esa intención. Mostrar el login con la sesión guardada es bug, por el token huérfano y porque la persona cree que está fuera.
-
-**5. Las iniciales de una cuenta sin nombre salen del usuario y del dominio del email**
+**4. Las iniciales de una cuenta sin nombre salen del usuario y del dominio del email**
 - Veredicto: bug. Un email siempre se parte en dos por la `@`, así que nunca se aplica la regla de las dos primeras letras, y sacar la segunda inicial del dominio no tiene sentido.
 
-**6. La pantalla traduce cualquier `400` y `401` con el mismo mensaje**
+**5. La pantalla traduce cualquier `400` y `401` con el mismo mensaje**
 - Veredicto: bug. El mensaje debería depender de la petición que falla, no solo del código de estado. Además, «caducado» no es verdad, porque los tokens no caducan.
 
-**7. Los mensajes de longitud empiezan en minúscula**
+**6. Los mensajes de longitud empiezan en minúscula**
 - Veredicto: bug. Deberían empezar en mayúscula; la minúscula es un efecto secundario de reutilizar la etiqueta del campo.
 
-**8. El error de longitud de la contraseña sale dos veces**
+**7. El error de longitud de la contraseña sale dos veces**
 - Veredicto: bug leve. La repetición solo debería comprobar que coincide con la contraseña; pedirle también la longitud no aporta nada y duplica el mensaje.
 
-**9. El aviso de sesión perdida vuelve a aparecer en intentos posteriores**
+**8. El aviso de sesión perdida vuelve a aparecer en intentos posteriores**
 - Veredicto: bug leve. El aviso sirve para que nadie llegue al login sin saber por qué, y eso ya se cumple al llegar. Que reaparezca después confunde; lo razonable sería borrarlo con el primer intento de entrar.
+
+**Decidido: contratos**
+
+**9. La clave `fullName` es obligatoria aunque el nombre sea opcional**
+- Veredicto: contrato. La API admite `null` pero pide que la clave esté, y el cliente la envía siempre, con un comentario que lo explica. Si un día se permite omitirla, basta con aceptar su ausencia en la API, que es un cambio compatible con los clientes actuales.
 
 **10. «Cerrando sesión…» nunca llega a verse**
 - Veredicto: contrato. El código deja escrito que la sesión se cierra en el navegador pase lo que pase, sin esperar al servidor, así que el cierre inmediato es lo buscado. Solo sobra un texto que nunca se muestra, y eso no se nota desde fuera.
+
+**11. Los clientes deberían fiarse de `rule` y `field`, no de `message`**
+- Veredicto: contrato propuesto. Hoy la pantalla ya construye sus mensajes a partir de `rule` y `field` y nunca muestra `message`, que llega en inglés. La recomendación es fijarlo como contrato para cualquier cliente. Los errores de credenciales y de autenticación no traen `rule` ni `field`, y por eso la pantalla tiene que adivinarlos por el código de estado (punto 5).

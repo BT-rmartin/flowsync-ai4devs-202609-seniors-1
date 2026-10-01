@@ -193,3 +193,27 @@ Comprueba que en la spec no aparece ni un nombre de archivo ni un nombre de clas
 ```
 
 **Qué salió:** Pasó varios grep a la spec: extensiones y rutas de fichero, nombres de piezas de código conocidas del repo (controladores, transformers, validadores, middlewares, componentes, hooks, clave del almacenamiento del navegador) e identificadores en PascalCase o camelCase, y revisó todo lo que va entre backticks. Ninguno encontró nombres de archivo ni de clase. Lo que hay entre backticks son rutas HTTP, URLs de pantalla, claves JSON de petición y respuesta, códigos de estado, cabeceras y valores de ejemplo, todo observable. Señaló que la sección 3 menciona «el código» en genérico, sin nombrar ningún archivo ni clase.
+
+## Prompt 14
+
+**Modelo:** Opus 5.5 (1M context)
+**Herramienta:** Claude Code
+
+```
+"### Requirement: Errores identificables por `rule` y `field`
+
+El sistema SHALL identificar cada error de validación con `rule` y `field`, que son el contrato para los clientes; `message` es un texto informativo en inglés y los clientes no deben depender de él." => El texto dice que rule y field "son el contrato para los clientes" y que "los clientes no deben depender de message". Eso viene de tu Prompt 5 ("que cliente se fie de rule y field no de message"). Es una decisión de diseño, no una descripción de lo que el sistema hace hoy; el README: "es la verdad actual del sistema". Lo descriptivo sí es correcto y verificable (la pantalla traduce a partir de rule y field; los 400/401 solo traen message). Deja esa parte y pasa la recomendación a la parte de bugs y contrato en parte b3
+```
+
+**Qué salió:** Reescribió el requisito en descriptivo: la API acompaña cada error de validación de `rule`, `field` y un `message` en inglés, y la pantalla construye su mensaje a partir de `rule` y `field`, nunca de `message`. Quitó también el «estables», que no se podía verificar. Pasó la recomendación a B3 como punto 11, «contrato propuesto», enlazado con el punto 6.
+
+## Prompt 15
+
+**Modelo:** Opus 5.5 (1M context)
+**Herramienta:** Claude Code
+
+```
+"Prácticamente todas las incoherencias son bugs, salvo la del nombre opcional, que es un contrato." contradice los ítems 3, 4 y 10. El propio agente te avisó en el Prompt 12 y quedó sin corregir. Además, los 10 ítems llevan veredicto; Reordenalo y pon lo primero lo que no supe decidir (punto 4) y los demás detrás. Distingue lo decidido de lo indeciso.
+```
+
+**Qué salió:** Reescribió la introducción de B3 (una sin decidir, siete bugs y tres contratos) y reordenó la sección en tres bloques: «Sin decidir», con el servidor inaccesible al arrancar como punto 1 y «Sin veredicto: las dos lecturas se sostienen» en lugar de veredicto; «Decidido: bugs» (2 a 8); y «Decidido: contratos» (9 a 11). Renumeró los puntos y corrigió la referencia cruzada del punto 11, que ahora apunta al 5.
